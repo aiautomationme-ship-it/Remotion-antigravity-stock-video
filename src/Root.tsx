@@ -26,7 +26,6 @@ import { FinancialChart } from "./FinancialChart";
 import { DenseDataMatrixEngine } from "./DenseDataMatrixEngine";
 import { EnterpriseAiInfrastructureEngine } from "./EnterpriseAiInfrastructureEngine";
 import { QuantumComputingLatticeEngine } from "./QuantumComputingLatticeEngine";
-import { CoreProductionTest } from "./CoreProductionTest";
 import { CyberHexagonNetworkEngine } from "./CyberHexagonNetworkEngine";
 import { AppPromo } from "./AppPromo";
 import { DynamicDashboard } from "./engine/DynamicDashboard";
@@ -72,17 +71,6 @@ export const RemotionRoot: React.FC = () => {
         height={2160}
         defaultProps={{
           videoSeed: 999
-        }}
-      />
-      <Composition
-        id="CoreTestAsset"
-        component={CoreProductionTest}
-        durationInFrames={600}
-        fps={60}
-        width={3840}
-        height={2160}
-        defaultProps={{
-          videoSeed: 77
         }}
       />
       <Composition
