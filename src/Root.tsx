@@ -23,6 +23,7 @@ import { CyberThreatShieldEngine } from "./CyberThreatShieldEngine";
 import { SemiconductorGrid } from "./SemiconductorGrid";
 import { CyberSecurity } from "./CyberSecurity";
 import { FinancialChart } from "./FinancialChart";
+import { DenseDataMatrixEngine } from "./DenseDataMatrixEngine";
 import { AppPromo } from "./AppPromo";
 import { DynamicDashboard } from "./engine/DynamicDashboard";
 import { Masterpiece } from "./components/Masterpiece";
@@ -58,6 +59,19 @@ import { Concept25_DigitalTransformation } from "./components/Concept25_DigitalT
 export const RemotionRoot: React.FC = () => {
   return (
     <>
+      <Composition
+        id="DenseDataMatrix"
+        component={DenseDataMatrixEngine}
+        durationInFrames={600}
+        fps={60}
+        width={3840}
+        height={2160}
+        defaultProps={{
+          videoSeed: 42,
+          nodeCount: 180,
+          connectDistance: 340
+        }}
+      />
       <Composition
         id="FinancialChart"
         component={FinancialChart}
@@ -126,8 +140,8 @@ export const RemotionRoot: React.FC = () => {
       <Composition
         id="AiVideoAsset"
         component={AiNetwork}
-        durationInFrames={300}
-        fps={30}
+        durationInFrames={600}
+        fps={60}
         width={3840}
         height={2160}
         defaultProps={{
