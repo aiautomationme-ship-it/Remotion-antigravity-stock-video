@@ -11,7 +11,7 @@ interface Props {
 }
 
 /**
- * 1. 3D POINT-CLOUD NEURAL SWARM (1,500 3D Particles with dynamic rotation & point lights)
+ * 1. 3D POINT-CLOUD NEURAL SWARM
  */
 const ParticleSwarmMesh: React.FC<{ color: string; remotionFrame: number }> = ({ color, remotionFrame }) => {
   const pointsRef = useRef<THREE.Points>(null!);
@@ -48,13 +48,13 @@ const ParticleSwarmMesh: React.FC<{ color: string; remotionFrame: number }> = ({
         <bufferAttribute attach="attributes-position" args={[positions, 3]} />
         <bufferAttribute attach="attributes-color" args={[colors, 3]} />
       </bufferGeometry>
-      <pointsMaterial size={0.12} vertexColors transparent opacity={0.8} sizeAttenuation />
+      <pointsMaterial size={0.12} vertexColors transparent opacity={0.7} sizeAttenuation />
     </points>
   );
 };
 
 /**
- * 2. 3D SILICON DIE SURFACE (64 3D Chip Tiles with Specular Lighting)
+ * 2. 3D SILICON DIE SURFACE (Capped Lighting & Normalized Materials)
  */
 const SiliconDieMesh: React.FC<{ color: string; remotionFrame: number }> = ({ color, remotionFrame }) => {
   const groupRef = useRef<THREE.Group>(null!);
@@ -70,9 +70,9 @@ const SiliconDieMesh: React.FC<{ color: string; remotionFrame: number }> = ({ co
 
   return (
     <group ref={groupRef} position={[0, -1, 0]}>
-      <ambientLight intensity={0.4} />
-      <pointLight position={[5, 10, 5]} intensity={2.5} color={color} />
-      <directionalLight position={[-5, 5, 2]} intensity={1.2} />
+      <ambientLight intensity={0.35} />
+      <pointLight position={[5, 10, 5]} intensity={1.4} color={color} />
+      <directionalLight position={[-5, 5, 2]} intensity={1.0} />
 
       {Array.from({ length: gridCount }).map((_, row) =>
         Array.from({ length: gridCount }).map((_, col) => {
@@ -83,7 +83,7 @@ const SiliconDieMesh: React.FC<{ color: string; remotionFrame: number }> = ({ co
           return (
             <mesh key={`tile-${row}-${col}`} position={[x, heightOffset, z]}>
               <boxGeometry args={[1, 0.4, 1]} />
-              <meshStandardMaterial color={color} roughness={0.2} metalness={0.8} />
+              <meshStandardMaterial color={color} roughness={0.20} metalness={0.80} />
             </mesh>
           );
         })
@@ -107,13 +107,13 @@ const OrbitalRingsMesh: React.FC<{ color: string; remotionFrame: number }> = ({ 
 
   return (
     <group ref={groupRef}>
-      <ambientLight intensity={0.5} />
-      <pointLight position={[0, 0, 5]} intensity={3} color={color} />
+      <ambientLight intensity={0.35} />
+      <pointLight position={[0, 0, 5]} intensity={1.5} color={color} />
 
       {[3, 5, 7].map((radius, i) => (
         <mesh key={`ring-${i}`} rotation={[Math.PI / 4 * (i + 1), 0, 0]}>
           <torusGeometry args={[radius, 0.08, 16, 100]} />
-          <meshStandardMaterial color={color} emissive={color} emissiveIntensity={0.6} roughness={0.1} />
+          <meshStandardMaterial color={color} emissive={color} emissiveIntensity={0.4} roughness={0.20} metalness={0.80} />
         </mesh>
       ))}
     </group>
@@ -121,14 +121,14 @@ const OrbitalRingsMesh: React.FC<{ color: string; remotionFrame: number }> = ({ 
 };
 
 /**
- * MASTER THREE.JS CANVAS ENGINE INTEGRATION
+ * MASTER THREE.JS CANVAS ENGINE INTEGRATION WITH TRANSPARENT CLEARCOLOR
  */
 export const ThreeCanvasEngine: React.FC<Props> = ({ meshType = 'particle_swarm', color }) => {
   const frame = useCurrentFrame();
 
   return (
     <div style={{ position: 'absolute', width: '100%', height: '100%', pointerEvents: 'none' }}>
-      <Canvas camera={{ position: [0, 0, 15], fov: 45 }}>
+      <Canvas gl={{ alpha: true, antialias: true }} style={{ background: 'transparent' }} camera={{ position: [0, 0, 15], fov: 45 }}>
         {meshType === 'particle_swarm' && <ParticleSwarmMesh color={color} remotionFrame={frame} />}
         {meshType === 'silicon_die' && <SiliconDieMesh color={color} remotionFrame={frame} />}
         {meshType === 'orbital_rings' && <OrbitalRingsMesh color={color} remotionFrame={frame} />}

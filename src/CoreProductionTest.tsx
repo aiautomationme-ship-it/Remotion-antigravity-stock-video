@@ -47,13 +47,14 @@ const BackgroundParticleSwarm: React.FC<{ color: string; remotionFrame: number }
         <bufferAttribute attach="attributes-position" args={[positions, 3]} />
         <bufferAttribute attach="attributes-color" args={[colors, 3]} />
       </bufferGeometry>
-      <pointsMaterial size={0.10} vertexColors transparent opacity={0.7} sizeAttenuation />
+      <pointsMaterial size={0.10} vertexColors transparent opacity={0.65} sizeAttenuation />
     </points>
   );
 };
 
 /**
  * SHARP MIDGROUND 3D METALLIC SPHERES & GLASS PRIMITIVES
+ * Clamped metalness (0.80) & raised roughness (0.20) for organic reflections without blowout.
  */
 const Midground3DPrimitives: React.FC<{
   cyanColor: string;
@@ -76,10 +77,9 @@ const Midground3DPrimitives: React.FC<{
       <mesh position={[0, 0, 0]}>
         <sphereGeometry args={[2.2, 64, 64]} />
         <meshStandardMaterial
-          color="#E2E8F0"
-          metalness={0.95}
-          roughness={0.08}
-          envMapIntensity={2.5}
+          color="#CBD5E1"
+          metalness={0.80}
+          roughness={0.20}
         />
       </mesh>
 
@@ -88,13 +88,13 @@ const Midground3DPrimitives: React.FC<{
         <torusGeometry args={[4.2, 0.45, 32, 100]} />
         <meshPhysicalMaterial
           color={cyanColor}
-          transmission={0.85}
-          roughness={0.05}
+          transmission={0.80}
+          roughness={0.20}
           ior={1.5}
           thickness={1.2}
           transparent
-          opacity={0.9}
-          metalness={0.2}
+          opacity={0.85}
+          metalness={0.25}
         />
       </mesh>
 
@@ -103,12 +103,12 @@ const Midground3DPrimitives: React.FC<{
         <icosahedronGeometry args={[1.5, 0]} />
         <meshPhysicalMaterial
           color={violetColor}
-          transmission={0.80}
-          roughness={0.1}
+          transmission={0.75}
+          roughness={0.20}
           ior={1.4}
           thickness={1.0}
           transparent
-          opacity={0.85}
+          opacity={0.80}
         />
       </mesh>
 
@@ -116,9 +116,9 @@ const Midground3DPrimitives: React.FC<{
       <mesh position={[-5.2, -1.8, 1.5]} rotation={[0, remotionFrame * 0.02, 0]}>
         <sphereGeometry args={[1.4, 32, 32]} />
         <meshStandardMaterial
-          color="#FFB703"
-          metalness={0.92}
-          roughness={0.10}
+          color="#F59E0B"
+          metalness={0.80}
+          roughness={0.20}
         />
       </mesh>
     </group>
@@ -147,11 +147,11 @@ const ForegroundFloaters: React.FC<{ color: string; remotionFrame: number }> = (
     <>
       <mesh ref={mesh1Ref} position={[-8.5, -3.5, 5.0]}>
         <dodecahedronGeometry args={[2.5, 0]} />
-        <meshStandardMaterial color={color} metalness={0.7} roughness={0.2} transparent opacity={0.65} />
+        <meshStandardMaterial color={color} metalness={0.75} roughness={0.25} transparent opacity={0.55} />
       </mesh>
       <mesh ref={mesh2Ref} position={[8.5, 4.0, 4.5]}>
         <octahedronGeometry args={[2.8, 0]} />
-        <meshStandardMaterial color="#8B5CF6" metalness={0.8} roughness={0.15} transparent opacity={0.6} />
+        <meshStandardMaterial color="#8B5CF6" metalness={0.75} roughness={0.25} transparent opacity={0.55} />
       </mesh>
     </>
   );
@@ -160,11 +160,11 @@ const ForegroundFloaters: React.FC<{ color: string; remotionFrame: number }> = (
 /**
  * CORE PRODUCTION TEST ENGINE
  * 
- * Specifications:
+ * Normalized Lighting & Material Specifications:
  * 1. 100% Clean Stock Plate (Zero text / Zero titles)
- * 2. 3D WebGL Multi-Plane Depth (Foreground floaters, midground primitives, background particle swarm)
- * 3. Vibrant HSL Contrast (Obsidian navy background, neon cyan & violet 3D meshes)
- * 4. Snappy Motion Physics (getSnappySpring entrance)
+ * 2. Reduced Ambient Light (0.35) & Point Light cap (1.30) to prevent white over-exposure
+ * 3. Transparent Canvas ClearColor (gl={{ alpha: true }}) allowing obsidian gradient to show
+ * 4. Normalized mesh materials (metalness: 0.80, roughness: 0.20)
  * 5. Locked to 3840x2160 @ 60 FPS (600 frames = 10s)
  */
 export const CoreProductionTest: React.FC<Props> = ({ videoSeed = 77 }) => {
@@ -178,7 +178,7 @@ export const CoreProductionTest: React.FC<Props> = ({ videoSeed = 77 }) => {
       bg: 'radial-gradient(circle, hsl(230, 90%, 8%) 0%, hsl(235, 95%, 3%) 100%)',
       neonCyan: '#00E5FF',
       neonViolet: '#8B5CF6',
-      gold: '#FFB703',
+      gold: '#F59E0B',
       particleColor: vibrant.primary,
     };
   }, [videoSeed]);
@@ -192,7 +192,7 @@ export const CoreProductionTest: React.FC<Props> = ({ videoSeed = 77 }) => {
   return (
     <AbsoluteFill style={{ background: palette.bg, overflow: 'hidden' }}>
       
-      {/* 3D WEBGL MULTI-PLANE CANVAS */}
+      {/* 3D WEBGL MULTI-PLANE CANVAS WITH TRANSPARENT CLEARCOLOR */}
       <div style={{
         position: 'absolute',
         width: '100%',
@@ -200,12 +200,16 @@ export const CoreProductionTest: React.FC<Props> = ({ videoSeed = 77 }) => {
         transform: `scale(${camera.scale}) translateX(${camera.panX}px) translateY(${camera.panY}px)`,
         transformOrigin: '1920px 1080px',
       }}>
-        <Canvas camera={{ position: [0, 0, 14], fov: 45 }}>
-          {/* Volumetric Studio Spotlights */}
-          <ambientLight intensity={0.5} />
-          <pointLight position={[12, 16, 12]} intensity={4.0} color={palette.neonCyan} />
-          <pointLight position={[-12, -16, -10]} intensity={3.0} color={palette.neonViolet} />
-          <spotLight position={[0, 15, 10]} intensity={2.5} angle={0.45} color="#FFFFFF" />
+        <Canvas
+          gl={{ alpha: true, antialias: true }}
+          style={{ background: 'transparent' }}
+          camera={{ position: [0, 0, 16], fov: 45 }}
+        >
+          {/* Capped Studio Lighting to Prevent Luminosity Over-Exposure */}
+          <ambientLight intensity={0.35} />
+          <pointLight position={[10, 14, 10]} intensity={1.30} color={palette.neonCyan} />
+          <pointLight position={[-10, -14, -10]} intensity={1.10} color={palette.neonViolet} />
+          <spotLight position={[0, 12, 8]} intensity={1.20} angle={0.45} color="#FFFFFF" />
 
           {/* Plane 1: Background Slow-Moving Particle Swarm */}
           <BackgroundParticleSwarm color={palette.particleColor} remotionFrame={frame} />
