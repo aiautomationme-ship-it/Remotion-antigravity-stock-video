@@ -24,6 +24,7 @@ import { SemiconductorGrid } from "./SemiconductorGrid";
 import { CyberSecurity } from "./CyberSecurity";
 import { FinancialChart } from "./FinancialChart";
 import { DenseDataMatrixEngine } from "./DenseDataMatrixEngine";
+import { EnterpriseAiInfrastructureEngine } from "./EnterpriseAiInfrastructureEngine";
 import { AppPromo } from "./AppPromo";
 import { DynamicDashboard } from "./engine/DynamicDashboard";
 import { Masterpiece } from "./components/Masterpiece";
@@ -59,6 +60,17 @@ import { Concept25_DigitalTransformation } from "./components/Concept25_DigitalT
 export const RemotionRoot: React.FC = () => {
   return (
     <>
+      <Composition
+        id="EnterpriseAiInfrastructure"
+        component={EnterpriseAiInfrastructureEngine}
+        durationInFrames={600}
+        fps={60}
+        width={3840}
+        height={2160}
+        defaultProps={{
+          videoSeed: 88
+        }}
+      />
       <Composition
         id="DenseDataMatrix"
         component={DenseDataMatrixEngine}
