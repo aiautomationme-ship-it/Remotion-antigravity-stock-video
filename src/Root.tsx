@@ -25,6 +25,8 @@ import { CyberSecurity } from "./CyberSecurity";
 import { FinancialChart } from "./FinancialChart";
 import { DenseDataMatrixEngine } from "./DenseDataMatrixEngine";
 import { EnterpriseAiInfrastructureEngine } from "./EnterpriseAiInfrastructureEngine";
+import { QuantumComputingLatticeEngine } from "./QuantumComputingLatticeEngine";
+import { CoreProductionTest } from "./CoreProductionTest";
 import { AppPromo } from "./AppPromo";
 import { DynamicDashboard } from "./engine/DynamicDashboard";
 import { Masterpiece } from "./components/Masterpiece";
@@ -60,6 +62,28 @@ import { Concept25_DigitalTransformation } from "./components/Concept25_DigitalT
 export const RemotionRoot: React.FC = () => {
   return (
     <>
+      <Composition
+        id="CoreTestAsset"
+        component={CoreProductionTest}
+        durationInFrames={600}
+        fps={60}
+        width={3840}
+        height={2160}
+        defaultProps={{
+          videoSeed: 77
+        }}
+      />
+      <Composition
+        id="QuantumComputingLattice"
+        component={QuantumComputingLatticeEngine}
+        durationInFrames={600}
+        fps={60}
+        width={3840}
+        height={2160}
+        defaultProps={{
+          videoSeed: 108
+        }}
+      />
       <Composition
         id="EnterpriseAiInfrastructure"
         component={EnterpriseAiInfrastructureEngine}
