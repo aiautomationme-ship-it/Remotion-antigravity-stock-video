@@ -27,6 +27,7 @@ import { DenseDataMatrixEngine } from "./DenseDataMatrixEngine";
 import { EnterpriseAiInfrastructureEngine } from "./EnterpriseAiInfrastructureEngine";
 import { QuantumComputingLatticeEngine } from "./QuantumComputingLatticeEngine";
 import { CyberHexagonNetworkEngine } from "./CyberHexagonNetworkEngine";
+import { CryptoDefensiveWebEngine } from "./CryptoDefensiveWebEngine";
 import { AppPromo } from "./AppPromo";
 import { DynamicDashboard } from "./engine/DynamicDashboard";
 import { Masterpiece } from "./components/Masterpiece";
@@ -62,6 +63,17 @@ import { Concept25_DigitalTransformation } from "./components/Concept25_DigitalT
 export const RemotionRoot: React.FC = () => {
   return (
     <>
+      <Composition
+        id="CryptoDefensiveWeb"
+        component={CryptoDefensiveWebEngine}
+        durationInFrames={600}
+        fps={60}
+        width={3840}
+        height={2160}
+        defaultProps={{
+          videoSeed: 555
+        }}
+      />
       <Composition
         id="CyberHexagonNetwork"
         component={CyberHexagonNetworkEngine}
