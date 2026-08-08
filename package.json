@@ -17,6 +17,7 @@
     "remotion": "4.0.505",
     "tailwindcss": "4.0.0",
     "three": "^0.185.1",
+    "ts-noise": "^0.0.5",
     "zod": "4.4.3"
   },
   "devDependencies": {
