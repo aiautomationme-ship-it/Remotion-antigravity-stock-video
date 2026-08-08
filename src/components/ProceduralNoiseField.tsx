@@ -17,7 +17,7 @@ export const ProceduralNoiseField: React.FC<NoiseFieldProps> = ({
   flowSpeed = 0.015,
 }) => {
   const frame = useCurrentFrame();
-  const { width, height } = useVideoConfig();
+  const { width, height, durationInFrames } = useVideoConfig();
 
   // 1. Initialize a strictly isolated math seed map based on your input string
   const noise3D = useMemo(() => {
@@ -26,7 +26,6 @@ export const ProceduralNoiseField: React.FC<NoiseFieldProps> = ({
       seedValue = (seedValue << 5) - seedValue + seedString.charCodeAt(i);
       seedValue |= 0;
     }
-    // Seeded random generator function
     const seededRandom = () => {
       seedValue = (seedValue * 9301 + 49297) % 233280;
       return seedValue / 233280;
@@ -49,6 +48,12 @@ export const ProceduralNoiseField: React.FC<NoiseFieldProps> = ({
     }
     return tempPoints;
   }, [width, height]);
+
+  // 3. Calculate 100% seamless circular time coordinates across clip duration
+  const totalFrames = durationInFrames || 600;
+  const angle = (frame / totalFrames) * Math.PI * 2;
+  const timeX = Math.cos(angle) * 0.8;
+  const timeY = Math.sin(angle) * 0.8;
 
   return (
     <svg
@@ -75,12 +80,13 @@ export const ProceduralNoiseField: React.FC<NoiseFieldProps> = ({
         </filter>
       </defs>
 
-      {/* 3. Programmatic rendering loop for complex telemetry elements */}
+      {/* Programmatic rendering loop for complex telemetry elements */}
       {points.map((pt, index) => {
+        // Compute the revised loopable noise input using circular time coordinates
         const noiseVal = noise3D(
           pt.posX * frequency,
           pt.posY * frequency,
-          frame * flowSpeed
+          timeX + timeY
         );
 
         const offsetX = noiseVal * 45;
