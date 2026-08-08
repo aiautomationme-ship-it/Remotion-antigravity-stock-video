@@ -28,7 +28,6 @@ videos.forEach((video, index) => {
   const outputFilename = `${video.id}_4K_60fps_10s.mp4`;
   const outputPath = path.join(outputDir, outputFilename);
 
-  // Check composition target: FinancialGraph vs MasterEditorial
   const compName = video.composition || (video.type ? 'FinancialGraphBullish' : 'MasterEditorialComposition');
 
   let propsPayload = {};
@@ -46,7 +45,7 @@ videos.forEach((video, index) => {
   } else {
     propsPayload = {
       niche: video.niche,
-      videoSeed: video.videoSeed !== undefined ? video.videoSeed : index + 101, // Automatic HSL Seed
+      videoSeed: video.videoSeed !== undefined ? video.videoSeed : index + 101,
       geometryType: video.geometryType || 'trig_wave',
       bgType: video.bgType || 'grid_mesh',
       typeStyle: video.typeStyle || 'editorial_hero',
@@ -60,15 +59,14 @@ videos.forEach((video, index) => {
     };
   }
 
-  // Safe temp file staging
   fs.writeFileSync(tempPropsPath, JSON.stringify(propsPayload, null, 2), 'utf-8');
   console.log(`📝 Props staged safely for ${compName}.`);
 
-  console.log(`🎬 Initiating Remotion compiler render track (${compName} -> 4K 60FPS)...`);
+  console.log(`🎬 Initiating Remotion 8x multi-threaded render (${compName} -> 4K 60FPS)...`);
   
   try {
     execSync(
-      `npx remotion render ${compName} "${outputPath}" --props="${tempPropsPath.replace(/\\/g, '/')}" --gl=angle --concurrency=2`,
+      `npx remotion render ${compName} "${outputPath}" --props="${tempPropsPath.replace(/\\/g, '/')}" --gl=angle --concurrency=8 --image-format=jpeg`,
       { stdio: 'inherit', cwd: path.join(__dirname, '..') }
     );
     console.log(`✅ Render successful! Asset saved to Output 2.`);
@@ -98,8 +96,6 @@ if (newRows.length > 0) {
     fs.writeFileSync(csvOutputPath, finalCsv, 'utf-8');
     console.log(`🎉 Pipeline cycle completed. Metadata saved to: ${csvOutputPath}`);
   } catch (err) {
-    const backupCsvPath = path.join(outputDir, `adobe_stock_manifest_${Date.now()}.csv`);
-    fs.writeFileSync(backupCsvPath, finalCsv, 'utf-8');
-    console.log(`🎉 Backup manifest created: ${backupCsvPath}`);
+    console.error("❌ Failed writing CSV manifest:", err.message);
   }
 }

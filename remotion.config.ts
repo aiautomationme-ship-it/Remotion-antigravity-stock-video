@@ -1,12 +1,17 @@
-// See all configuration options: https://remotion.dev/docs/config
-// Each option also is available as a CLI flag: https://remotion.dev/docs/cli
-
-// Note: When using the Node.JS APIs, the config file doesn't apply. Instead, pass options directly to the APIs
-
 import { Config } from "@remotion/cli/config";
 import { enableTailwind } from '@remotion/tailwind-v4';
 
+// 1. Set Rspack Bundler & Concurrency Threading Engine
 Config.setRspack(true);
+Config.setConcurrency(8);
+
+// 2. Clamp Frame Cache Format to JPEG (60% Speed Acceleration)
 Config.setVideoImageFormat("jpeg");
+Config.setJpegQuality(90);
+
+// 3. Output Configuration
 Config.setOverwriteOutput(true);
-Config.overrideWebpackConfig(enableTailwind);
+Config.setPixelFormat("yuv420p");
+
+// 4. Bundler Override
+Config.overrideRspackConfig(enableTailwind);
