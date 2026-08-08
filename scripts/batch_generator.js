@@ -1,6 +1,9 @@
 const { execSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
+const os = require('os');
+
+const maxCores = os.cpus().length || 8;
 
 // Target paths
 const dataPath = path.join(__dirname, '../data/videos_to_render.json');
@@ -14,7 +17,7 @@ if (!fs.existsSync(dataPath)) {
 }
 const videos = JSON.parse(fs.readFileSync(dataPath, 'utf-8'));
 
-console.log(`🚀 Master Batch Generator Initialized for ${videos.length} assets (12x Core Multi-Thread Acceleration)...`);
+console.log(`🚀 Master Batch Generator Initialized for ${videos.length} assets (${maxCores}x CPU Core Acceleration)...`);
 
 if (!fs.existsSync(outputDir)) {
   fs.mkdirSync(outputDir, { recursive: true });
@@ -62,11 +65,11 @@ videos.forEach((video, index) => {
   fs.writeFileSync(tempPropsPath, JSON.stringify(propsPayload, null, 2), 'utf-8');
   console.log(`📝 Props staged safely for ${compName}.`);
 
-  console.log(`🎬 Initiating 12x Multi-Threaded Remotion render (${compName} -> 4K 60FPS)...`);
+  console.log(`🎬 Initiating ${maxCores}x Multi-Threaded Remotion render (${compName} -> 4K 60FPS)...`);
   
   try {
     execSync(
-      `npx remotion render ${compName} "${outputPath}" --props="${tempPropsPath.replace(/\\/g, '/')}" --gl=angle --concurrency=12 --image-format=jpeg`,
+      `npx remotion render ${compName} "${outputPath}" --props="${tempPropsPath.replace(/\\/g, '/')}" --gl=angle --concurrency=${maxCores} --image-format=jpeg`,
       { stdio: 'inherit', cwd: path.join(__dirname, '..') }
     );
     console.log(`✅ Render successful! Asset saved to Output 2.`);

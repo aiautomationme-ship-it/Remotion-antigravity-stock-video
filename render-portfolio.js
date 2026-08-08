@@ -1,12 +1,13 @@
 const { execSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
+const os = require('os');
 
 /**
  * MASTER MASS-PRODUCTION 4K 60FPS RENDER PORTFOLIO PIPELINE
- * Enforces 12x Multi-Thread Core Acceleration (--concurrency=12)
- * and JPEG frame caching for maximum speed without sacrificing visual quality.
+ * Automatically scales concurrency to 100% of maximum available CPU cores.
  */
+const maxCores = os.cpus().length || 8;
 const outputDir = 'D:\\remotion+Adobe\\Output\\Output 2';
 
 if (!fs.existsSync(outputDir)) {
@@ -20,12 +21,12 @@ function renderComposition(comp, outputName, seed = 999) {
   const outputPath = path.join(outputDir, outputName);
   const isLambdaConfigured = process.env.REMOTION_LAMBDA_FUNCTION_NAME || process.env.AWS_ACCESS_KEY_ID;
 
-  console.log(`\n🚀 [12x Core Acceleration] Initiating ${isLambdaConfigured ? 'AWS Lambda Cloud' : '12x Multi-Threaded Local'} Render: ${comp} (seed=${seed}) -> ${outputName}...`);
+  console.log(`\n🚀 [Max Hardware Acceleration: ${maxCores} Cores] Initiating ${isLambdaConfigured ? 'AWS Lambda Cloud' : `${maxCores}x Multi-Threaded Local`} Render: ${comp} (seed=${seed}) -> ${outputName}...`);
 
   try {
     const renderCmd = isLambdaConfigured
       ? `npx remotion lambda render ${comp} "${outputPath}" --props="${tempPropsFile.replace(/\\/g, '/')}" --privacy=public`
-      : `npx remotion render ${comp} "${outputPath}" --props="${tempPropsFile.replace(/\\/g, '/')}" --gl=angle --concurrency=12 --image-format=jpeg`;
+      : `npx remotion render ${comp} "${outputPath}" --props="${tempPropsFile.replace(/\\/g, '/')}" --gl=angle --concurrency=${maxCores} --image-format=jpeg`;
 
     execSync(renderCmd, { stdio: 'inherit', cwd: __dirname });
     console.log(`✅ Successfully compiled ${comp} -> ${outputPath}`);
