@@ -1,10 +1,13 @@
 import React, { useMemo } from 'react';
 import { useCurrentFrame, useVideoConfig } from 'remotion';
 import { createNoise3D } from 'simplex-noise';
+import { getVibrantPalette } from '../utils/colorEngine';
 
 interface NoiseFieldProps {
   /** A unique text string or ID to completely change the layout structure */
   seedString: string;
+  /** Numerical seed for dynamic colorEngine HSL palette resolution */
+  videoSeed?: number;
   /** Controls how tightly packed the vector mesh waves are */
   frequency?: number;
   /** Controls the speed of the ambient dimensional flow */
@@ -13,13 +16,17 @@ interface NoiseFieldProps {
 
 export const ProceduralNoiseField: React.FC<NoiseFieldProps> = ({
   seedString,
+  videoSeed = 42,
   frequency = 0.003,
   flowSpeed = 0.015,
 }) => {
   const frame = useCurrentFrame();
   const { width, height, durationInFrames } = useVideoConfig();
 
-  // 1. Initialize a strictly isolated math seed map based on your input string
+  // 1. Dynamic Broadcast HSL Palette Integration from colorEngine.ts
+  const palette = useMemo(() => getVibrantPalette(videoSeed), [videoSeed]);
+
+  // 2. Initialize a strictly isolated math seed map based on seedString
   const noise3D = useMemo(() => {
     let seedValue = 0;
     for (let i = 0; i < seedString.length; i++) {
@@ -33,7 +40,7 @@ export const ProceduralNoiseField: React.FC<NoiseFieldProps> = ({
     return createNoise3D(seededRandom);
   }, [seedString]);
 
-  // 2. Establish a high-density coordinate grid map across the canvas
+  // 3. High-density coordinate grid map across the canvas
   const gridResolutionX = 24;
   const gridResolutionY = 14;
 
@@ -49,7 +56,7 @@ export const ProceduralNoiseField: React.FC<NoiseFieldProps> = ({
     return tempPoints;
   }, [width, height]);
 
-  // 3. Calculate 100% seamless circular time coordinates across clip duration
+  // 4. Circular Easing Math synced to 600 frames (100% infinite seamless loop)
   const totalFrames = durationInFrames || 600;
   const angle = (frame / totalFrames) * Math.PI * 2;
   const timeX = Math.cos(angle) * 0.8;
@@ -63,6 +70,9 @@ export const ProceduralNoiseField: React.FC<NoiseFieldProps> = ({
         height: '100%',
         background: 'transparent',
         overflow: 'visible',
+        // Inject colorEngine HSL palette tokens into CSS custom properties
+        ['--accent-glow' as any]: palette.primary,
+        ['--accent-highlight' as any]: palette.accent,
       }}
     >
       <defs>
@@ -82,7 +92,6 @@ export const ProceduralNoiseField: React.FC<NoiseFieldProps> = ({
 
       {/* Programmatic rendering loop for complex telemetry elements */}
       {points.map((pt, index) => {
-        // Compute the revised loopable noise input using circular time coordinates
         const noiseVal = noise3D(
           pt.posX * frequency,
           pt.posY * frequency,
@@ -102,15 +111,15 @@ export const ProceduralNoiseField: React.FC<NoiseFieldProps> = ({
             style={{ opacity: elementOpacity, transition: 'opacity 0.1s linear' }}
           >
             {/* Elite micro-crosshair alignment marker */}
-            <line x1="-6" y1="0" x2="6" y2="0" stroke="var(--accent-glow, #00E5FF)" strokeWidth="1" filter="url(#vectorGlow)" />
-            <line x1="0" y1="-6" x2="0" y2="6" stroke="var(--accent-glow, #00E5FF)" strokeWidth="1" filter="url(#vectorGlow)" />
+            <line x1="-6" y1="0" x2="6" y2="0" stroke="var(--accent-glow)" strokeWidth="1" filter="url(#vectorGlow)" />
+            <line x1="0" y1="-6" x2="0" y2="6" stroke="var(--accent-glow)" strokeWidth="1" filter="url(#vectorGlow)" />
             
             {/* Dynamic visual indicator dot */}
             <circle 
               cx="0" 
               cy="0" 
               r={2 * pointScale} 
-              fill="var(--accent-highlight, #8B5CF6)" 
+              fill="var(--accent-highlight)" 
             />
           </g>
         );
