@@ -3,8 +3,9 @@ const fs = require('fs');
 const path = require('path');
 
 /**
- * RENDER PORTFOLIO PIPELINE SCRIPT
- * Multi-Threaded 4K 60FPS Batch Renderer with 8x Concurrency and JPEG Image Format Clamping
+ * HEADLESS REMOTION LAMBDA CLOUD & LOCAL HYBRID RENDER PORTFOLIO PIPELINE SCRIPT
+ * Executes high-speed headless AWS Lambda cloud rendering when AWS credentials are present,
+ * or fast 8x multi-threaded local rendering with JPEG frame clamping.
  */
 const outputDir = 'D:\\remotion+Adobe\\Output\\Output 2';
 
@@ -17,13 +18,16 @@ function renderComposition(comp, outputName, seed = 999) {
   fs.writeFileSync(tempPropsFile, JSON.stringify({ videoSeed: seed }, null, 2), 'utf-8');
 
   const outputPath = path.join(outputDir, outputName);
-  console.log(`\n🎬 Initiating 8x Multi-Threaded Render for ${comp} -> ${outputName}...`);
+  const isLambdaConfigured = process.env.REMOTION_LAMBDA_FUNCTION_NAME || process.env.AWS_ACCESS_KEY_ID;
+
+  console.log(`\n🎬 Initiating ${isLambdaConfigured ? 'Headless AWS Lambda Cloud' : '8x Multi-Threaded Local'} Render for ${comp} -> ${outputName}...`);
 
   try {
-    execSync(
-      `npx remotion render ${comp} "${outputPath}" --props="${tempPropsFile.replace(/\\/g, '/')}" --gl=angle --concurrency=8 --image-format=jpeg`,
-      { stdio: 'inherit', cwd: __dirname }
-    );
+    const renderCmd = isLambdaConfigured
+      ? `npx remotion lambda render ${comp} "${outputPath}" --props="${tempPropsFile.replace(/\\/g, '/')}" --privacy=public`
+      : `npx remotion render ${comp} "${outputPath}" --props="${tempPropsFile.replace(/\\/g, '/')}" --gl=angle --concurrency=8 --image-format=jpeg`;
+
+    execSync(renderCmd, { stdio: 'inherit', cwd: __dirname });
     console.log(`✅ Successfully compiled ${comp} -> ${outputPath}`);
   } catch (err) {
     console.error(`❌ Render failed for ${comp}:`, err.message);
@@ -34,7 +38,6 @@ function renderComposition(comp, outputName, seed = 999) {
   }
 }
 
-// Example invocation if run directly
 if (require.main === module) {
   const targetComp = process.argv[2] || 'NeuralSupercomputerGrid';
   const targetOutput = process.argv[3] || '032_Neural_Supercomputer_Data_Pathways_Fluid_Grid_4K_60fps_10s.mp4';

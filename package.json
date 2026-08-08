@@ -9,6 +9,7 @@
     "@react-three/drei": "^10.7.8",
     "@react-three/fiber": "^9.7.0",
     "@remotion/cli": "4.0.505",
+    "@remotion/lambda": "^4.0.505",
     "@remotion/tailwind-v4": "4.0.505",
     "@remotion/zod-types": "4.0.505",
     "@types/three": "^0.185.4",
