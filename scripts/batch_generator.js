@@ -14,7 +14,7 @@ if (!fs.existsSync(dataPath)) {
 }
 const videos = JSON.parse(fs.readFileSync(dataPath, 'utf-8'));
 
-console.log(`🚀 Master Batch Generator Initialized for ${videos.length} assets...`);
+console.log(`🚀 Master Batch Generator Initialized for ${videos.length} assets (12x Core Multi-Thread Acceleration)...`);
 
 if (!fs.existsSync(outputDir)) {
   fs.mkdirSync(outputDir, { recursive: true });
@@ -62,11 +62,11 @@ videos.forEach((video, index) => {
   fs.writeFileSync(tempPropsPath, JSON.stringify(propsPayload, null, 2), 'utf-8');
   console.log(`📝 Props staged safely for ${compName}.`);
 
-  console.log(`🎬 Initiating Remotion 8x multi-threaded render (${compName} -> 4K 60FPS)...`);
+  console.log(`🎬 Initiating 12x Multi-Threaded Remotion render (${compName} -> 4K 60FPS)...`);
   
   try {
     execSync(
-      `npx remotion render ${compName} "${outputPath}" --props="${tempPropsPath.replace(/\\/g, '/')}" --gl=angle --concurrency=8 --image-format=jpeg`,
+      `npx remotion render ${compName} "${outputPath}" --props="${tempPropsPath.replace(/\\/g, '/')}" --gl=angle --concurrency=12 --image-format=jpeg`,
       { stdio: 'inherit', cwd: path.join(__dirname, '..') }
     );
     console.log(`✅ Render successful! Asset saved to Output 2.`);

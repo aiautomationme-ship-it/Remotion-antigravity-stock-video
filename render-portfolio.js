@@ -3,9 +3,9 @@ const fs = require('fs');
 const path = require('path');
 
 /**
- * HEADLESS REMOTION LAMBDA CLOUD & LOCAL HYBRID RENDER PORTFOLIO PIPELINE SCRIPT
- * Executes high-speed headless AWS Lambda cloud rendering when AWS credentials are present,
- * or fast 8x multi-threaded local rendering with JPEG frame clamping.
+ * MASTER MASS-PRODUCTION 4K 60FPS RENDER PORTFOLIO PIPELINE
+ * Enforces 12x Multi-Thread Core Acceleration (--concurrency=12)
+ * and JPEG frame caching for maximum speed without sacrificing visual quality.
  */
 const outputDir = 'D:\\remotion+Adobe\\Output\\Output 2';
 
@@ -20,12 +20,12 @@ function renderComposition(comp, outputName, seed = 999) {
   const outputPath = path.join(outputDir, outputName);
   const isLambdaConfigured = process.env.REMOTION_LAMBDA_FUNCTION_NAME || process.env.AWS_ACCESS_KEY_ID;
 
-  console.log(`\n🎬 Initiating ${isLambdaConfigured ? 'Headless AWS Lambda Cloud' : '8x Multi-Threaded Local'} Render for ${comp} -> ${outputName}...`);
+  console.log(`\n🚀 [12x Core Acceleration] Initiating ${isLambdaConfigured ? 'AWS Lambda Cloud' : '12x Multi-Threaded Local'} Render: ${comp} (seed=${seed}) -> ${outputName}...`);
 
   try {
     const renderCmd = isLambdaConfigured
       ? `npx remotion lambda render ${comp} "${outputPath}" --props="${tempPropsFile.replace(/\\/g, '/')}" --privacy=public`
-      : `npx remotion render ${comp} "${outputPath}" --props="${tempPropsFile.replace(/\\/g, '/')}" --gl=angle --concurrency=8 --image-format=jpeg`;
+      : `npx remotion render ${comp} "${outputPath}" --props="${tempPropsFile.replace(/\\/g, '/')}" --gl=angle --concurrency=12 --image-format=jpeg`;
 
     execSync(renderCmd, { stdio: 'inherit', cwd: __dirname });
     console.log(`✅ Successfully compiled ${comp} -> ${outputPath}`);
