@@ -30,6 +30,7 @@ import { CyberHexagonNetworkEngine } from "./CyberHexagonNetworkEngine";
 import { CryptoDefensiveWebEngine } from "./CryptoDefensiveWebEngine";
 import { NeonPulseSphereEngine } from "./NeonPulseSphereEngine";
 import { CybersecurityValidationScene } from "./CybersecurityValidationScene";
+import { NeuralSupercomputerGridEngine } from "./NeuralSupercomputerGridEngine";
 import { AppPromo } from "./AppPromo";
 import { DynamicDashboard } from "./engine/DynamicDashboard";
 import { Masterpiece } from "./components/Masterpiece";
@@ -65,6 +66,17 @@ import { Concept25_DigitalTransformation } from "./components/Concept25_DigitalT
 export const RemotionRoot: React.FC = () => {
   return (
     <>
+      <Composition
+        id="NeuralSupercomputerGrid"
+        component={NeuralSupercomputerGridEngine}
+        durationInFrames={600}
+        fps={60}
+        width={3840}
+        height={2160}
+        defaultProps={{
+          videoSeed: 999
+        }}
+      />
       <Composition
         id="CybersecurityValidation"
         component={CybersecurityValidationScene}
