@@ -15,6 +15,7 @@
     "react": "19.2.3",
     "react-dom": "19.2.3",
     "remotion": "4.0.505",
+    "simplex-noise": "^4.0.3",
     "tailwindcss": "4.0.0",
     "three": "^0.185.1",
     "ts-noise": "^0.0.5",

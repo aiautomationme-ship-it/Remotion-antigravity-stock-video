@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import { useCurrentFrame, useVideoConfig } from 'remotion';
-import { createNoise3D } from 'ts-noise';
+import { createNoise3D } from 'simplex-noise';
 
 interface NoiseFieldProps {
   /** A unique text string or ID to completely change the layout structure */
@@ -21,13 +21,17 @@ export const ProceduralNoiseField: React.FC<NoiseFieldProps> = ({
 
   // 1. Initialize a strictly isolated math seed map based on your input string
   const noise3D = useMemo(() => {
-    // Generate a simple deterministic numerical seed from the provided string
     let seedValue = 0;
     for (let i = 0; i < seedString.length; i++) {
       seedValue = (seedValue << 5) - seedValue + seedString.charCodeAt(i);
       seedValue |= 0;
     }
-    return createNoise3D(() => Math.abs(seedValue) / 2147483647);
+    // Seeded random generator function
+    const seededRandom = () => {
+      seedValue = (seedValue * 9301 + 49297) % 233280;
+      return seedValue / 233280;
+    };
+    return createNoise3D(seededRandom);
   }, [seedString]);
 
   // 2. Establish a high-density coordinate grid map across the canvas
@@ -73,22 +77,16 @@ export const ProceduralNoiseField: React.FC<NoiseFieldProps> = ({
 
       {/* 3. Programmatic rendering loop for complex telemetry elements */}
       {points.map((pt, index) => {
-        // Calculate the fluid vector offset in 3D mathematical space
-        // x and y represent screen space; the 3rd dimension (time) is driven by the frame count
         const noiseVal = noise3D(
           pt.posX * frequency,
           pt.posY * frequency,
           frame * flowSpeed
         );
 
-        // Convert the raw noise values (-1 to 1) into smooth geometric coordinates
         const offsetX = noiseVal * 45;
         const offsetY = Math.sin(noiseVal * Math.PI) * 45;
         
-        // Map the depth profile to scale element dimensions dynamically
         const pointScale = Math.max(0.3, (noiseVal + 1) / 2);
-        
-        // Calculate structural opacity to prevent visual cluttering
         const elementOpacity = Math.max(0.08, ((noiseVal + 1) / 2) * 0.6);
 
         return (
